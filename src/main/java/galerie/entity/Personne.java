@@ -3,10 +3,10 @@ import javax.persistence.*;
 import lombok.*;
 import java.util.*;
 
-
 @Getter @Setter @NoArgsConstructor @RequiredArgsConstructor @ToString
 @Entity // Une entité JPA
-public class Galerie {
+@Inheritance(strategy = InheritanceType.JOINED)
+public class Personne {
     @Id  @GeneratedValue(strategy = GenerationType.IDENTITY) 
     private Integer id;
 
@@ -18,16 +18,16 @@ public class Galerie {
     @NonNull
     private String adresse;
     
-    @OneToMany(mappedBy = "galerie")
-    private List<Exposition> events = new LinkedList<>();
+    @OneToMany(mappedBy = "client")
+    private List<Transaction> achats;
     
-    public float caAnnuel(int annee) {
-        float chiffreAffaire = 0;
-        for (Exposition e : events) {
-            if (e.getDebut().getYear() == annee) {
-                chiffreAffaire += e.ca();
+    public float budgetArtAnnuel(int annee) {
+        float budget = 0;
+        for (Transaction t : achats) {
+            if (t.getVenduLe().getYear() == annee) {
+                budget += t.getPrixVente();
             }
         }
-        return chiffreAffaire;
+        return budget;
     }
 }
